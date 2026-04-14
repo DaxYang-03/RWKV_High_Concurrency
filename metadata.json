@@ -1,0 +1,5 @@
+{
+  "name": "RWKV 320-Way Concurrency Demo",
+  "description": "A visual demonstration of 320 concurrent text generation streams simulating the RWKV model's high-throughput capabilities.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+/* Hide scrollbar but keep scrolling functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+
+.thread-markdown {
+  word-break: break-word;
+}
+
+.thread-markdown > :first-child {
+  margin-top: 0;
+}
+
+.thread-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.thread-markdown__h1,
+.thread-markdown__h2,
+.thread-markdown__h3 {
+  margin: 1.1em 0 0.55em;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.thread-markdown__h1 {
+  font-size: 1.7em;
+}
+
+.thread-markdown__h2 {
+  font-size: 1.35em;
+}
+
+.thread-markdown__h3 {
+  font-size: 1.12em;
+}
+
+.thread-markdown__p,
+.thread-markdown__ul,
+.thread-markdown__ol,
+.thread-markdown__blockquote,
+.thread-markdown__pre,
+.thread-markdown__table-wrap {
+  margin: 0.7em 0;
+}
+
+.thread-markdown__ul,
+.thread-markdown__ol {
+  padding-left: 1.6em;
+}
+
+.thread-markdown__li + .thread-markdown__li {
+  margin-top: 0.28em;
+}
+
+.thread-markdown__blockquote {
+  margin-left: 0;
+  padding: 0.9em 1em;
+  border-left: 3px solid currentColor;
+}
+
+.thread-markdown__link {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.thread-markdown__table-wrap {
+  overflow-x: auto;
+}
+
+.thread-markdown__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.thread-markdown__th,
+.thread-markdown__td {
+  padding: 0.65em 0.8em;
+  border: 1px solid currentColor;
+  vertical-align: top;
+}
+
+.thread-markdown__hr {
+  margin: 1.2em 0;
+  border: 0;
+  border-top: 1px solid currentColor;
+}
+
+.thread-markdown__pre {
+  overflow-x: auto;
+  padding: 1em;
+  border: 1px solid currentColor;
+}
+
+.thread-markdown__code {
+  font-family: "Fira Code", "SFMono-Regular", "Cascadia Code", Consolas, monospace;
+  text-shadow: none;
+}
+
+.thread-markdown__code--inline {
+  display: inline-block;
+  padding: 0.08em 0.35em;
+  border-radius: 0.35em;
+}
+
+.thread-markdown__code--block {
+  display: block;
+  white-space: pre;
+}
+
+.thread-markdown .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.45em 0;
+}
+
+.thread-markdown .katex {
+  font-size: 1.05em;
+}

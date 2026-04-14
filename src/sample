@@ -1,0 +1,16 @@
+# Replace the placeholders below with your own endpoint and credentials.
+
+curl "<YOUR_API_URL>" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_API_KEY>" \
+  --data-raw '{
+    "model": "<YOUR_MODEL>",
+    "messages": [
+      {
+        "role": "user",
+        "content": "你好，做个简短的自我介绍。"
+      }
+    ],
+    "max_tokens": 256,
+    "stream": true
+  }'
