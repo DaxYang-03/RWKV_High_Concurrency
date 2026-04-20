@@ -1,5 +1,7 @@
 # RWKV Concurrency Demo
 
+[简体中文](./README.md) | [English](./README.en.md)
+
 一个用于并发流式生成压测与可视化展示的前端项目，当前保留三套皮肤：`minimal`、`matrix`、`digital rain`。
 
 ## 快速开始
@@ -14,12 +16,12 @@
 
 运行后请在设置面板中手动填写你自己的配置：
 
-- `API URL`：请填写完整的 endpoint 地址
+- `API URL`：支持填写主机、基础 URL 或完整 endpoint；界面会自动补全常见路径
 - `API key`：可选
 - `API password`：可选
 - `Model`：可自动检测，也可手动自定义
 
-如果你没有填写完整 endpoint，前端不会再自动补全默认路径。
+如果 `API URL` 留空，前端不会发起请求。
 
 ## 可选本地代理
 
@@ -29,7 +31,7 @@
 - 构建后本地服务：`API_PROXY_TARGET="<YOUR_API_BASE_URL>" npm run serve`
 - 分发版静态服务：`API_PROXY_TARGET="<YOUR_API_BASE_URL>" node serve-dist.mjs`
 
-未设置 `API_PROXY_TARGET` 时，`/api` 代理不会指向任何默认上游；此时请直接在界面里填写完整 API URL。
+未设置 `API_PROXY_TARGET` 时，`/api` 代理不会指向任何默认上游；此时请直接在界面里填写 API URL。
 
 ## 构建
 
@@ -46,4 +48,4 @@
 4. 运行 `node serve-dist.mjs`
 5. 打开 `http://localhost:3000`
 
-如果你希望那台电脑也走 `/api` 代理，再额外设置 `API_PROXY_TARGET`；否则直接在网页设置里填写完整 API URL 即可。
+如果你希望那台电脑也走 `/api` 代理，再额外设置 `API_PROXY_TARGET`；否则直接在网页设置里填写 API URL 即可。

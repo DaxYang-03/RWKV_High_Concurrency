@@ -662,7 +662,9 @@ export default function App() {
   const [promptText, setPromptText] = useState(DEFAULT_PROMPT);
   const [concurrency, setConcurrency] = useState(DEFAULT_CONCURRENCY);
   const [throughput, setThroughput] = useState<string>('--');
-  const [memoryUsage, setMemoryUsage] = useState<string>('--');
+  const [editingHeaderField, setEditingHeaderField] = useState<'hardware' | 'model' | null>(null);
+  const [hardwareHeaderDraft, setHardwareHeaderDraft] = useState('');
+  const [modelHeaderDraft, setModelHeaderDraft] = useState('');
   const [selectedThreadIndex, setSelectedThreadIndex] = useState<number | null>(null);
   const [selectedThreadText, setSelectedThreadText] = useState('');
   const themeMenuRef = useRef<HTMLDivElement>(null);
@@ -719,6 +721,44 @@ export default function App() {
 
     return availableModels;
   }, [availableModels, modelSelectValue]);
+  const displayModelLabel = resolvedRequestModel || 'AUTO';
+  const beginHeaderEdit = useCallback((field: 'hardware' | 'model') => {
+    if (field === 'hardware') {
+      setHardwareHeaderDraft(customHardwareName.trim() || (resolvedHardwareLabel === 'AUTO' ? '' : resolvedHardwareLabel));
+    } else {
+      setModelHeaderDraft(resolvedRequestModel || '');
+    }
+
+    setEditingHeaderField(field);
+  }, [customHardwareName, resolvedHardwareLabel, resolvedRequestModel]);
+  const cancelHeaderEdit = useCallback(() => {
+    setEditingHeaderField(null);
+  }, []);
+  const commitHeaderEdit = useCallback((field: 'hardware' | 'model') => {
+    if (field === 'hardware') {
+      setCustomHardwareName(hardwareHeaderDraft.trim());
+      setEditingHeaderField(null);
+      return;
+    }
+
+    const trimmedModelName = modelHeaderDraft.trim();
+    if (!trimmedModelName) {
+      setModelSelectValue(AUTO_MODEL_OPTION);
+      setCustomModelName('');
+      setEditingHeaderField(null);
+      return;
+    }
+
+    if (availableModels.includes(trimmedModelName)) {
+      setModelSelectValue(trimmedModelName);
+      setCustomModelName('');
+    } else {
+      setModelSelectValue(CUSTOM_MODEL_OPTION);
+      setCustomModelName(trimmedModelName);
+    }
+
+    setEditingHeaderField(null);
+  }, [availableModels, hardwareHeaderDraft, modelHeaderDraft]);
   const gridMetrics = useMemo(() => {
     const cellCount = Math.max(1, concurrency);
 
@@ -968,7 +1008,6 @@ export default function App() {
     throughputSamplesRef.current = [];
     statsRef.current = { firstTokenReceived: false };
     setThroughput('--');
-    setMemoryUsage('--');
     setBackendHardwareName('');
     setRequestError('');
     setConnectionNotice('');
@@ -1058,10 +1097,6 @@ export default function App() {
 
             try {
               const data = JSON.parse(dataStr);
-
-              if (data.memory_gb !== undefined) {
-                setMemoryUsage(`${data.memory_gb.toFixed(1)}_GB`);
-              }
 
               const nextHardwareLabel = extractHardwareLabel(data);
               if (nextHardwareLabel) {
@@ -1691,9 +1726,9 @@ export default function App() {
         <div className="flex items-center space-x-8">
           <div className="hidden md:flex items-center space-x-6 text-[13px] font-bold uppercase" style={{ letterSpacing: theme.headerLetterSpacing }}>
             {[
-              { label: 'Hardware', value: resolvedHardwareLabel },
+              { label: 'Hardware', value: resolvedHardwareLabel, field: 'hardware' as const, editWidth: '180px', placeholder: '留空恢复 AUTO / 后端返回' },
               { label: 'Throughput', value: throughput },
-              { label: 'Memory', value: memoryUsage },
+              { label: 'Model', value: displayModelLabel, field: 'model' as const, editWidth: '240px', placeholder: '留空使用 AUTO' },
             ].map((m, idx) => (
               <React.Fragment key={m.label}>
                 {idx > 0 && (
@@ -1703,9 +1738,66 @@ export default function App() {
                   <span className="text-[10px] mb-0.5" style={{ color: theme.secondary }}>
                     {m.label}
                   </span>
-                  <span style={{ color: theme.primary, textShadow: `0 0 5px ${theme.primary}66` }}>
-                    {m.value}
-                  </span>
+                  {'field' in m ? (
+                    editingHeaderField === m.field ? (
+                      <input
+                        autoFocus
+                        type="text"
+                        value={m.field === 'hardware' ? hardwareHeaderDraft : modelHeaderDraft}
+                        onChange={(event) => {
+                          if (m.field === 'hardware') {
+                            setHardwareHeaderDraft(event.target.value);
+                          } else {
+                            setModelHeaderDraft(event.target.value);
+                          }
+                        }}
+                        onBlur={() => commitHeaderEdit(m.field)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') {
+                            event.preventDefault();
+                            commitHeaderEdit(m.field);
+                          } else if (event.key === 'Escape') {
+                            event.preventDefault();
+                            cancelHeaderEdit();
+                          }
+                        }}
+                        placeholder={m.placeholder}
+                        className="px-1 py-0.5 text-[12px] text-right outline-none normal-case"
+                        style={{
+                          width: m.editWidth,
+                          backgroundColor: `${theme.primary}0a`,
+                          border: `1px solid ${theme.primary}35`,
+                          color: theme.primary,
+                          textShadow: `0 0 5px ${theme.primary}66`,
+                        }}
+                      />
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => beginHeaderEdit(m.field)}
+                        className="text-right normal-case transition-colors duration-150"
+                        style={{
+                          color: theme.primary,
+                          textShadow: `0 0 5px ${theme.primary}66`,
+                          cursor: 'text',
+                          whiteSpace: 'nowrap',
+                        }}
+                        onMouseEnter={(event) => {
+                          event.currentTarget.style.color = '#ffffff';
+                        }}
+                        onMouseLeave={(event) => {
+                          event.currentTarget.style.color = theme.primary;
+                        }}
+                        title={`点击修改 ${m.label}`}
+                      >
+                        {m.value}
+                      </button>
+                    )
+                  ) : (
+                    <span className="normal-case" style={{ color: theme.primary, textShadow: `0 0 5px ${theme.primary}66` }}>
+                      {m.value}
+                    </span>
+                  )}
                 </div>
               </React.Fragment>
             ))}
